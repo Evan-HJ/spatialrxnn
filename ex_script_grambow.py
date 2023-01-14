@@ -26,7 +26,7 @@ arguments = [
     '--data_path', 'datasets/wb97xd3.csv',
     '--dataset_type', 'regression',
     '--save_dir', dir,
-    '--checkpoint_dir', 'cpf_cgrpre_100_grambow/fold_0/model_0/model.pt',
+    '--checkpoint_path', 'cpf_cgrpre_100_grambow/fold_0/model_0/model.pt',
     '--epochs', '100',
     '--reaction',
     '--explicit_h',

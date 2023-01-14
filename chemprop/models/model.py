@@ -349,6 +349,9 @@ class ReactionModel(Model):
         # self.w0 = nn.Parameter(torch.ones(1))
         self.w1 = nn.Parameter(torch.zeros(1))
 
+        self.w2 = nn.Parameter(torch.ones(1))
+        self.w3 = nn.Parameter(torch.zeros(1))
+
     def create_encoder(self, args: TrainArgs):
         self.m1 = MoleculeModel(args)
         self.m1.create_encoder(args)
@@ -445,9 +448,9 @@ class ReactionModel(Model):
         # mol_vecs = torch.cat([mol_vecs, aggr_distance_features], dim = 1) #8x360
         
         #Pass into FFN
-        # final_embeddings = torch.mul(mol_vecs, self.w0) + torch.mul(embeddings, self.w1)
+        final_embeddings = torch.mul(mol_vecs, self.w2) + torch.mul(embeddings, self.w3)
         # final_embeddings = mol_vecs + embeddings
-        final_embeddings = embeddings
+        # final_embeddings = embeddings
         preds = self.ffn(final_embeddings)
 
         return preds#, mae
