@@ -6,6 +6,8 @@ SpatialRXNN is a 2023 research prototype that combines a condensed graph of reac
 
 **Technologies:** Python, PyTorch, PyTorch Geometric, RDKit, graph neural networks, transformers, molecular representation learning
 
+**Project documents:** [Abstract](docs/SpatialRXNN_Abstract.pdf) | [Full report](docs/SpatialRXNN_Report.pdf)
+
 ![SpatialRXNN architecture](docs/images/spatialrxnn-architecture.png)
 
 *SpatialRXNN combines local chemical representations from a D-MPNN with global, distance-aware atom interactions in a transformer.*
@@ -57,6 +59,7 @@ Results shown are from the original 2023 project evaluation. Full experimental d
 | [`ex_script_get_3d_features.py`](ex_script_get_3d_features.py) | Historical conformer-generation script |
 | [`ex_script_grambow.py`](ex_script_grambow.py) | Historical staged training script for B97-D3/omegaB97X-D3 |
 | [`docs/implementation.md`](docs/implementation.md) | Detailed contribution map and data flow |
+| [`docs/SpatialRXNN_Abstract.pdf`](docs/SpatialRXNN_Abstract.pdf) | One-page project abstract |
 | [`docs/SpatialRXNN_Report.pdf`](docs/SpatialRXNN_Report.pdf) | Full project report, experimental setup, and analysis |
 
 ## Background and attribution
