@@ -34,6 +34,18 @@ For an atom-mapped reaction, SpatialRXNN performs four main operations:
 
 The full architecture, equations, experimental protocol, and ablations are described in the [project report](docs/SpatialRXNN_Report.pdf).
 
+## Environment setup
+
+The tested macOS setup uses Miniforge, Python 3.10, and the dependencies captured in [`environment.yml`](environment.yml):
+
+```bash
+conda env create -f environment.yml
+conda activate spatialrxnn
+python scripts/smoke_test_spatial.py
+```
+
+On Apple Silicon this configuration provides a stable CPU environment for inspecting the project and running small experiments. It is isolated from the system Python and can be removed with `conda env remove -n spatialrxnn` without affecting other projects.
+
 ## Running the workflow
 
 The original experiment sequence is now captured in [`configs/grambow_2023.json`](configs/grambow_2023.json). Each stage has its own output directory and names the checkpoint it inherits, making the pretraining and fine-tuning path explicit.
