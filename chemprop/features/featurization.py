@@ -306,17 +306,34 @@ def map_reac_to_prod(mol_reac: Chem.Mol, mol_prod: Chem.Mol):
 #         for neigh in atom.GetNeighbors():
 
 class AttnFeatures:
-    def __init__(self):
-        self.smiles_to_3d_features = {}
-        self.edge_type_dict = {}
-        if os.path.exists('3d_features.pkl'):
-            with open('3d_features.pkl', 'rb') as f:
-                self.smiles_to_3d_features = pickle.load(f)
+    """Loads spatial features and maintains the atom-pair type vocabulary."""
 
-        #This is really bad...
-        if os.path.exists('edge_type.pkl'):
-            with open('edge_type.pkl', 'rb') as f:
-                self.edge_type_dict = pickle.load(f)
+    def __init__(self, spatial_features_path='3d_features.pkl', edge_types_path='edge_type.pkl'):
+        self.configure(spatial_features_path, edge_types_path)
+
+    def configure(self, spatial_features_path='3d_features.pkl', edge_types_path='edge_type.pkl'):
+        self.spatial_features_path = os.path.abspath(spatial_features_path)
+        self.edge_types_path = os.path.abspath(edge_types_path)
+        self.smiles_to_3d_features = self._load_dictionary(self.spatial_features_path)
+        self.edge_type_dict = self._load_dictionary(self.edge_types_path)
+
+    @staticmethod
+    def _load_dictionary(path):
+        if not os.path.exists(path):
+            return {}
+        with open(path, 'rb') as f:
+            value = pickle.load(f)
+        if not isinstance(value, dict):
+            raise ValueError(f'Expected a dictionary in {path}')
+        return value
+
+    def _save_edge_types(self):
+        directory = os.path.dirname(self.edge_types_path)
+        os.makedirs(directory, exist_ok=True)
+        temporary_path = self.edge_types_path + '.tmp'
+        with open(temporary_path, 'wb') as f:
+            pickle.dump(self.edge_type_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
+        os.replace(temporary_path, self.edge_types_path)
     
     def get_3d_features(self, smiles):
         if (smiles in self.smiles_to_3d_features):
@@ -325,18 +342,17 @@ class AttnFeatures:
             return {}
     
     def get_edge_type(self, atom1, atom2):
-        if ((atom1, atom2) in self.edge_type_dict):
-            return self.edge_type_dict[(atom1, atom2)]
-        else:
+        if (atom1, atom2) not in self.edge_type_dict:
             self.edge_type_dict[(atom1, atom2)] = len(self.edge_type_dict)
-
-            #This is very bad...
-            with open('edge_type.pkl', 'wb') as f:
-                pickle.dump(self.edge_type_dict, f)
-
-            return self.edge_type_dict[(atom1, atom2)]
+            self._save_edge_types()
+        return self.edge_type_dict[(atom1, atom2)]
 
 ATTN_FEATURES = AttnFeatures()
+
+
+def configure_attn_features(spatial_features_path='3d_features.pkl', edge_types_path='edge_type.pkl'):
+    """Configure the cache files used by spatial attention featurization."""
+    ATTN_FEATURES.configure(spatial_features_path, edge_types_path)
 
 def get_pair_distance(distances, a1, a2):
     if (a1, a2) in distances:

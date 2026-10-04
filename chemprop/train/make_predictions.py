@@ -7,7 +7,7 @@ import numpy as np
 from chemprop.args import PredictArgs, TrainArgs
 from chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader, MoleculeDataset, StandardScaler
 from chemprop.utils import load_args, load_checkpoint, load_scalers, makedirs, timeit, update_prediction_args
-from chemprop.features import set_extra_atom_fdim, set_extra_bond_fdim, set_reaction, set_explicit_h, set_adding_hs, reset_featurization_parameters
+from chemprop.features import set_extra_atom_fdim, set_extra_bond_fdim, set_reaction, set_explicit_h, set_adding_hs, reset_featurization_parameters, configure_attn_features
 from chemprop.models import MoleculeModel
 from chemprop.uncertainty import UncertaintyCalibrator, build_uncertainty_calibrator, UncertaintyEstimator, build_uncertainty_evaluator
 
@@ -103,6 +103,10 @@ def set_features(args: PredictArgs, train_args: TrainArgs):
     :param train_args: A :class:`~chemprop.args.TrainArgs` object containing arguments for training the model.
     """
     reset_featurization_parameters()
+    configure_attn_features(
+        getattr(train_args, 'spatial_features_path', '3d_features.pkl'),
+        getattr(train_args, 'edge_types_path', 'edge_type.pkl')
+    )
 
     if args.atom_descriptors == "feature":
         set_extra_atom_fdim(train_args.atom_features_size)

@@ -26,7 +26,7 @@ distance change --> Gaussian kernels -+--> spatial transformer
 
 ### 1. Conformer and distance generation
 
-File: [`../ex_script_get_3d_features.py`](../ex_script_get_3d_features.py)
+File: [`../scripts/generate_spatial_features.py`](../scripts/generate_spatial_features.py)
 
 The preprocessing script:
 
@@ -35,7 +35,9 @@ The preprocessing script:
 - attempts MMFF and UFF optimization;
 - chooses a low-energy conformer;
 - calculates pairwise Euclidean atom distances within each molecular fragment;
-- stores the resulting distance dictionaries in a pickle cache.
+- stores the resulting distance dictionaries in a resumable pickle cache.
+
+The generated `3d_features.pkl` path matches the training default. Both this cache and the persistent atom-pair vocabulary can be configured through training arguments, so experiments do not depend on an implicit working directory.
 
 ### 2. Condensed graph and spatial features
 
@@ -89,6 +91,8 @@ Files:
 
 These changes add project-specific model choices, transformer/spatial arguments, optional encoder freezing, partial state-dictionary loading, prediction export, and attention export.
 
+The original four-stage pretraining and fine-tuning sequence is represented by [`../configs/grambow_2023.json`](../configs/grambow_2023.json) and executed by [`../scripts/run_experiment.py`](../scripts/run_experiment.py). The runner resolves checkpoint dependencies between named stages, keeps their output directories separate, supports short epoch overrides, and offers a dependency-free dry run for inspecting the exact commands.
+
 
 
 ## Chemprop foundation
@@ -104,4 +108,3 @@ The repository also retains Chemprop's general-purpose infrastructure, including
 - the original Chemprop documentation and demo assets.
 
 SpatialRXNN builds on this foundation with the project-specific components described above. The upstream Chemprop code is retained under its MIT license.
-

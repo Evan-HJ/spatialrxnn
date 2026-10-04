@@ -5,6 +5,8 @@
 *.csv
 *.pt
 *.json
+!configs/
+!configs/*.json
 *.sqlite3
 chemprop.egg-info
 docs/build
@@ -12,6 +14,8 @@ script_*
 cp_*
 cpf_*
 test_*
+!tests/
+!tests/test_*.py
 *.log
 *.pkl
 notebook.ipynb
@@ -20,4 +24,5 @@ old_3d
 3d_features.txt
 .venv
 datasets
+outputs
 *.tar.gz

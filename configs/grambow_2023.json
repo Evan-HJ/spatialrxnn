@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "project_root": "..",
+  "common": {
+    "dataset_type": "regression",
+    "epochs": 100,
+    "reaction": true,
+    "explicit_h": true,
+    "split_type": "scaffold_balanced",
+    "extra_metrics": ["mae"],
+    "spatial_features_path": "3d_features.pkl",
+    "edge_types_path": "edge_type.pkl"
+  },
+  "stages": [
+    {
+      "name": "cgr_pretrain_b97d3",
+      "data_path": "datasets/b97d3.csv",
+      "save_dir": "outputs/grambow/cgr_pretrain_b97d3",
+      "arguments": {
+        "split_sizes": [0.9, 0.1, 0.0],
+        "aggregation": "cgr-pretrain"
+      }
+    },
+    {
+      "name": "cgr_finetune_wb97xd3",
+      "data_path": "datasets/wb97xd3.csv",
+      "save_dir": "outputs/grambow/cgr_finetune_wb97xd3",
+      "checkpoint_from": "cgr_pretrain_b97d3",
+      "arguments": {
+        "split_sizes": [0.8, 0.1, 0.1],
+        "aggregation": "cgr-pretrain"
+      }
+    },
+    {
+      "name": "transformer_b97d3",
+      "data_path": "datasets/b97d3.csv",
+      "save_dir": "outputs/grambow/transformer_b97d3",
+      "checkpoint_from": "cgr_finetune_wb97xd3",
+      "arguments": {
+        "split_sizes": [0.9, 0.1, 0.0],
+        "aggregation": "transformer",
+        "transformer_layers": 2,
+        "freeze_mpn": true
+      }
+    },
+    {
+      "name": "transformer_wb97xd3",
+      "data_path": "datasets/wb97xd3.csv",
+      "save_dir": "outputs/grambow/transformer_wb97xd3",
+      "checkpoint_from": "transformer_b97d3",
+      "arguments": {
+        "split_sizes": [0.8, 0.1, 0.1],
+        "aggregation": "transformer",
+        "transformer_layers": 2,
+        "freeze_mpn": true,
+        "save_smiles_splits": true,
+        "save_preds": true
+      }
+    }
+  ]
+}

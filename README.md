@@ -34,6 +34,36 @@ For an atom-mapped reaction, SpatialRXNN performs four main operations:
 
 The full architecture, equations, experimental protocol, and ablations are described in the [project report](docs/SpatialRXNN_Report.pdf).
 
+## Running the workflow
+
+The original experiment sequence is now captured in [`configs/grambow_2023.json`](configs/grambow_2023.json). Each stage has its own output directory and names the checkpoint it inherits, making the pretraining and fine-tuning path explicit.
+
+Inspect the complete four-stage plan without starting a training job:
+
+```bash
+python scripts/run_experiment.py --config configs/grambow_2023.json --dry-run
+```
+
+Generate the spatial feature cache from one or more CSV files containing an `AAM` reaction-SMILES column:
+
+```bash
+python scripts/generate_spatial_features.py datasets/b97d3.csv datasets/wb97xd3.csv
+```
+
+The generator resumes from `3d_features.pkl`, checkpoints its progress, and records failed conformers in `3d_features.log`. That cache name matches the training code by default; both the feature and atom-pair cache paths can also be set in the experiment config.
+
+Run the configured workflow after the datasets and environment are in place:
+
+```bash
+python scripts/run_experiment.py --config configs/grambow_2023.json
+```
+
+Useful options include `--stage transformer_b97d3` to select a stage, `--epochs 1` for a short trial, and `--resume` to skip completed checkpoints. A small CPU-only check of the spatial Gaussian and attention components is also provided:
+
+```bash
+python scripts/smoke_test_spatial.py
+```
+
 ## Results
 
 The table below reproduces the mean absolute error reported in the 2023 project report. Values are mean +/- standard deviation; lower is better.
@@ -56,8 +86,10 @@ Results shown are from the original 2023 project evaluation. Full experimental d
 | [`chemprop/models/mpn.py`](chemprop/models/mpn.py) | D-MPNN atom-level representations |
 | [`chemprop/models/transformer.py`](chemprop/models/transformer.py) | Spatially biased transformer and Gaussian basis layer |
 | [`chemprop/models/model.py`](chemprop/models/model.py) | SpatialRXNN model composition and readout |
-| [`ex_script_get_3d_features.py`](ex_script_get_3d_features.py) | Historical conformer-generation script |
-| [`ex_script_grambow.py`](ex_script_grambow.py) | Historical staged training script for B97-D3/omegaB97X-D3 |
+| [`scripts/generate_spatial_features.py`](scripts/generate_spatial_features.py) | Resumable RDKit conformer and distance-cache generation |
+| [`scripts/run_experiment.py`](scripts/run_experiment.py) | Config-driven staged training and checkpoint transfer |
+| [`configs/grambow_2023.json`](configs/grambow_2023.json) | Original four-stage B97-D3/omegaB97X-D3 workflow |
+| [`scripts/smoke_test_spatial.py`](scripts/smoke_test_spatial.py) | CPU check for the core spatial layers |
 | [`docs/implementation.md`](docs/implementation.md) | Detailed contribution map and data flow |
 | [`docs/SpatialRXNN_Abstract.pdf`](docs/SpatialRXNN_Abstract.pdf) | One-page project abstract |
 | [`docs/SpatialRXNN_Report.pdf`](docs/SpatialRXNN_Report.pdf) | Full project report, experimental setup, and analysis |

@@ -416,6 +416,10 @@ class TrainArgs(CommonArgs):
     """Number of kernels to use in gaussian layer"""
     edge_types: int = 1024
     """Number of types of atom pairs (a1, a2) for gaussian layer"""
+    spatial_features_path: str = '3d_features.pkl'
+    """Path to the precomputed pairwise 3D distance feature cache."""
+    edge_types_path: str = 'edge_type.pkl'
+    """Path to the persistent atom-pair type vocabulary used by the Gaussian layer."""
 
     # Training arguments
     epochs: int = 30
